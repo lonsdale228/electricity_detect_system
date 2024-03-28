@@ -1,14 +1,9 @@
-import asyncio
-
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes.posts import router
 from api.schemas.models import HealthResponse
-from database.connection import engine
-from database.models import Base
-
 
 app = FastAPI()
 
