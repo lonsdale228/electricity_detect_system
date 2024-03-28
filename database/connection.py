@@ -1,33 +1,20 @@
-from decouple import config
-from fastapi import Depends
-from sqlalchemy import create_engine
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession, async_scoped_session
-from sqlalchemy.orm import sessionmaker, scoped_session
-from asyncio import current_task
-from typing import Annotated, AsyncIterator
+
+from database.models import Base
 
 # SQLALCHEMY_DATABASE_URL = config("DATABASE_URL")
 SQLALCHEMY_DATABASE_URL = "postgresql+asyncpg://postgres:1111@localhost:5432/electricity"
 
-async_engine = create_async_engine(
-    SQLALCHEMY_DATABASE_URL,
-    pool_pre_ping=True,
-    echo=True,
-)
-AsyncSessionLocal = async_sessionmaker(
-    bind=async_engine,
-    autoflush=False,
-    future=True,
-)
+engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
 
 
-async def get_session() -> AsyncIterator[async_sessionmaker]:
-    try:
-        yield AsyncSessionLocal
-    except SQLAlchemyError as e:
-        print(e)
+async def get_session_maker():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    return async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
-AsyncSession = Annotated[async_sessionmaker, Depends(get_session)]
+async def get_session() -> AsyncSession:
+    session_maker = await get_session_maker()
+    async with session_maker() as session:
+        yield session

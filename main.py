@@ -6,8 +6,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes.posts import router
 from api.schemas.models import HealthResponse
-from database.connection import async_engine
+from database.connection import engine
 from database.models import Base
+
 
 app = FastAPI()
 
@@ -28,13 +29,5 @@ app.include_router(router=router, prefix="/posts")
 async def health():
     return HealthResponse(status="Ok")
 
-
-async def main():
-    async with async_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-        await conn.run_sync(Base.metadata.create_all)
-
-
 if __name__ == '__main__':
-    asyncio.run(main())
     uvicorn.run(app, port=8000, host='0.0.0.0')

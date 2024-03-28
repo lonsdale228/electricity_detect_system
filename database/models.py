@@ -1,9 +1,7 @@
 import uuid
 
-from sqlalchemy import Column, String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.ext.asyncio import AsyncAttrs
-from sqlalchemy.orm import mapped_column, Mapped, DeclarativeBase, declarative_base
+from sqlalchemy.orm import mapped_column, Mapped, declarative_base
 
 Base = declarative_base()
 
