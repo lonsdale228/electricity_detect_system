@@ -1,3 +1,5 @@
 SQLAlchemy==2.0.29
 python-decouple==3.8
 fastapi==0.110.0
+starlette==0.36.3
+pydantic==2.6.4
