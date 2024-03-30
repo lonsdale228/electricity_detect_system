@@ -1,15 +1,30 @@
 import logging
 from time import time
-
+import redis.asyncio as redis
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+
+from fastapi_limiter import FastAPILimiter
+from fastapi_limiter.depends import RateLimiter
+
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from api.routes.posts import router
 from api.schemas.models import HealthResponse
 
-app = FastAPI()
+from contextlib import asynccontextmanager
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    redis_connection = redis.from_url("redis://localhost:6379", encoding="utf8")
+    await FastAPILimiter.init(redis_connection)
+    yield
+    await FastAPILimiter.close()
+
+
+app = FastAPI(lifespan=lifespan)
 
 origins = ["*"]
 
@@ -24,9 +39,10 @@ app.add_middleware(
 app.include_router(router=router, prefix="/posts")
 
 
-@app.get("/", response_model=HealthResponse)
+@app.get("/", response_model=HealthResponse, dependencies=[Depends(RateLimiter(times=60, seconds=60))])
 async def health():
     return HealthResponse(status="Ok")
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
