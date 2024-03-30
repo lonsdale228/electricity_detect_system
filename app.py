@@ -1,8 +1,10 @@
 import logging
+from time import time
 
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from api.routes.posts import router
 from api.schemas.models import HealthResponse

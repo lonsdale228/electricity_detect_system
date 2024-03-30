@@ -14,8 +14,8 @@ async def post_create(session: AsyncSession, post: Post):
     return db_user
 
 
-async def get_all_users(session: AsyncSession):
+async def get_all_users(session: AsyncSession, limit: int = 10, offset: int = 0):
     async with session:
-        stmt = select(Posts).limit(100)
+        stmt = select(Posts).offset(offset).limit(limit)
         result = await session.execute(stmt)
         return result.scalars().all()
