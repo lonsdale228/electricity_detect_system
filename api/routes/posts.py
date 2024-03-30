@@ -12,7 +12,7 @@ async def create_post(post: Post, session=Depends(get_session)):
     return await post_create(session=session, post=post)
 
 
-@router.get("/get_all_userss", status_code=status.HTTP_201_CREATED, response_model=list[Post])
+@router.get("/get_all_users", status_code=status.HTTP_201_CREATED, response_model=list[Post])
 async def get_users(skip: int = 0, limit: int = 10, session=Depends(get_session)):
     if limit > 100 or limit <= 0: limit = 1
     return await get_all_users(offset=skip, limit=limit, session=session)
