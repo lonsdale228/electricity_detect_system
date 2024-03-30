@@ -1,4 +1,5 @@
 import contextlib
+import os
 from typing import Any, AsyncIterator
 
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession, async_scoped_session, \
@@ -6,8 +7,8 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, Asyn
 
 from database.models import Base
 
-# SQLALCHEMY_DATABASE_URL = config("DATABASE_URL")
-SQLALCHEMY_DATABASE_URL = "postgresql+asyncpg://postgres:1111@localhost:5432/electricity"
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+# SQLALCHEMY_DATABASE_URL = "postgresql+asyncpg://postgres:1111@localhost:5432/electricity"
 
 
 class DatabaseSessionManager:

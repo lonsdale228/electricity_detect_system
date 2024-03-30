@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from time import time
 import redis.asyncio as redis
@@ -15,10 +16,13 @@ from api.schemas.models import HealthResponse
 
 from contextlib import asynccontextmanager
 
+from database.connection import sessionmanager
+from database.models import Base
+
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    redis_connection = redis.from_url("redis://localhost:6379", encoding="utf8")
+    redis_connection = redis.from_url("redis://redis:6379", encoding="utf8")
     await FastAPILimiter.init(redis_connection)
     yield
     await FastAPILimiter.close()
@@ -41,9 +45,11 @@ app.include_router(router=router, prefix="/posts")
 
 @app.get("/", response_model=HealthResponse, dependencies=[Depends(RateLimiter(times=60, seconds=60))])
 async def health():
+    async with sessionmanager.connect() as connection:
+        await connection.run_sync(Base.metadata.create_all)
     return HealthResponse(status="Ok")
 
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.ERROR)
-    uvicorn.run(app, port=8000, host='0.0.0.0')
+# if __name__ == '__main__':
+#
+#     logging.basicConfig(level=logging.ERROR)
+#     uvicorn.run(app, port=8000, host='0.0.0.0')
