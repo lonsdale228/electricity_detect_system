@@ -1,6 +1,8 @@
+import secrets
 import uuid
+from datetime import datetime
 
-from sqlalchemy import Integer
+from sqlalchemy import Integer, DateTime, BigInteger
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, Mapped, declarative_base
 
@@ -14,14 +16,17 @@ class Posts(Base):
                                      index=True)
     title: Mapped[str] = mapped_column()
     description: Mapped[str] = mapped_column()
-    api_key: Mapped[str] = mapped_column()
+    api_key: Mapped[str] = mapped_column(default=lambda: str(secrets.token_urlsafe(16)))
 
 
 class ApiUsers(Base):
     __tablename__ = "api_users"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    api_key: Mapped[str] = mapped_column()
+    api_key: Mapped[str] = mapped_column(default=lambda: str(secrets.token_urlsafe(16)))
+    created_at = mapped_column(DateTime, default=lambda: datetime.now())
+    last_usage = mapped_column(DateTime, default=None)
+    tg_id = mapped_column(BigInteger, unique=True)
 
 
 class Addresses(Base):

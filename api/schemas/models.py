@@ -8,11 +8,16 @@ class HealthResponse(BaseModel):
     status: str
 
 
+class ApiUser(BaseModel):
+    tg_id: int
+
+
 class Post(BaseModel):
     id: Optional[UUID] = Field(None, description="Who sends the error message.")
-    title: str
-    description: str
-    api_key: str
+    key: str
+    # title: str
+    # description: str
+    # api_key: str
 
     class Config:
         from_attributes = True
