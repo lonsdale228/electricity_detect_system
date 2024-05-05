@@ -1,6 +1,14 @@
 version: '3.8'
 
 services:
+  tg_bot:
+    build:
+      context: ./bot
+      dockerfile: Dockerfile_bot
+    environment:
+      - TG_BOT_TOKEN=7070344661:AAEWKc6drAOyQc5L3vBru-UO7a3bb3zx9-I
+      - DATABASE_URL=postgresql+asyncpg://tg_bot:1111@db:5432/electricity
+
   redis:
     image: redis:latest
     restart: always
@@ -27,7 +35,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     expose:
-      - 5432
+      - 5434
+    ports:
+      - "5434:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=1111
