@@ -94,6 +94,7 @@ async def status(message: Message):
 async def get_location(message: Message):
     await message.answer(f'{message.location.latitude}, {message.location.longitude}')
 
+
 async def main():
     async with sessionmanager.connect() as connection:
         await connection.run_sync(Base.metadata.create_all)

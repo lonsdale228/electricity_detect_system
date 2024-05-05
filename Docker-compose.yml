@@ -5,9 +5,8 @@ services:
     build:
       context: ./bot
       dockerfile: Dockerfile_bot
-    environment:
-      - TG_BOT_TOKEN=7070344661:AAEWKc6drAOyQc5L3vBru-UO7a3bb3zx9-I
-      - DATABASE_URL=postgresql+asyncpg://tg_bot:1111@db:5432/electricity
+    env_file:
+      - .env
 
   redis:
     image: redis:latest
@@ -23,8 +22,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./:/code:ro
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:1111@db:5432/electricity
+    env_file:
+      - .env
     ports:
       - "8000:80"
     depends_on:

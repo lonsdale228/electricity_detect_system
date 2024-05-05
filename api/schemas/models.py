@@ -21,7 +21,7 @@ class Post(BaseModel):
 
 
 class Address(BaseModel):
-    api_key: Optional[str] = Field(None, description="Enter valid api key...")
+    id: int = Field(None, description="Who sends the error")
     latitude: float = Field(None, description="")
     longitude: float = Field(None, description="")
     electricity_status: bool = Field(None)
