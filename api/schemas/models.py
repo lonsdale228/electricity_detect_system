@@ -25,6 +25,7 @@ class Address(BaseModel):
     latitude: float = Field(None, description="")
     longitude: float = Field(None, description="")
     electricity_status: bool = Field(None)
+
     class Config:
         from_attributes = True
 

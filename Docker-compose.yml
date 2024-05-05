@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile_bot
     env_file:
       - .env
+    depends_on:
+      - db
 
   redis:
     image: redis:latest
@@ -16,6 +18,7 @@ services:
     volumes:
       - /path/to/local/dаta:/root/redis
       - /path/to/local/redis.conf:/usr/local/etc/redis/redis.conf
+
   web:
     build:
       context: .
@@ -41,6 +44,19 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=1111
       - POSTGRES_DB=electricity
+    depends_on:
+      - redis
+
+  map:
+    build:
+      context: ./map
+      dockerfile: Dockerfile
+    expose:
+      - 8001
+    ports:
+      - "8001:8001"
+    depends_on:
+      - web
 
 volumes:
   postgres_data:

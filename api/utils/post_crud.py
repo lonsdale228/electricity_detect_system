@@ -40,8 +40,32 @@ async def get_all_users(session: AsyncSession, limit: int = 10, offset: int = 0)
         return result.scalars().all()
 
 
+async def check_api_key_exists(session: AsyncSession, api_key: str):
+    async with session:
+        stmt = select(ApiUsers).where(ApiUsers.api_key == api_key)
+        result = await session.execute(stmt)
+        return result.one_or_none()
+
+
 async def get_all_addresses(session: AsyncSession, limit: int = 10, offset: int = 0):
     async with session:
         stmt = select(Addresses)
         result = await session.execute(stmt)
         return result.scalars().all()
+
+
+async def get_my_address(session: AsyncSession, tg_id: int):
+    async with session:
+        stmt = select(Addresses).where(Addresses.tg_id == tg_id)
+        result = await session.execute(stmt)
+        return result.scalars().all()
+
+
+async def get_uniq_address(session: AsyncSession, api_key, user_id: int = 0):
+    if await check_api_key_exists(session, api_key):
+        async with session:
+            stmt = select(Addresses).where(ApiUsers.id == user_id).limit(1)
+            result = await session.execute(stmt)
+            return result.scalars().all()
+    else:
+        print("API key not exist!")

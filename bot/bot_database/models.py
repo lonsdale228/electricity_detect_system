@@ -2,9 +2,9 @@ import secrets
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Integer, DateTime, BigInteger
+from sqlalchemy import Integer, DateTime, BigInteger, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import mapped_column, Mapped, declarative_base
+from sqlalchemy.orm import mapped_column, Mapped, declarative_base, relationship
 
 Base = declarative_base()
 
@@ -28,13 +28,17 @@ class ApiUsers(Base):
     last_usage = mapped_column(DateTime, default=None)
     tg_id = mapped_column(BigInteger, unique=True)
 
+    addresses = relationship("Addresses", back_populates="api_user")
+
 
 class Addresses(Base):
     __tablename__ = "addresses"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     is_private: Mapped[bool] = mapped_column()
-    tg_id = mapped_column(BigInteger, unique=False)
+    tg_id = mapped_column(BigInteger, ForeignKey('api_users.tg_id'), unique=False)
     electricity_status: Mapped[bool] = mapped_column()
     latitude: Mapped[float] = mapped_column()
     longitude: Mapped[float] = mapped_column()
+
+    api_user = relationship("ApiUsers", back_populates="addresses")

@@ -3,12 +3,16 @@ import logging
 
 from aiogram import F
 from sqlalchemy import select, delete
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.connection import sessionmanager, get_session
-from database.models import Base, ApiUsers, Addresses
+from bot_database.connection import sessionmanager, get_session
+from bot_database.models import Base, ApiUsers, Addresses
 from loader import bot, dp
 from aiogram.types import Message
 from aiogram.filters import Command
+
+import handlers
+
 import aiohttp
 
 URL = "http://web/posts/createe"
@@ -47,14 +51,18 @@ async def get_token(tg_id: int):
 
 
 async def delete_usr(tg_id: int):
+    session: AsyncSession
     async with sessionmanager.session() as session:
         stmt = select(ApiUsers).where(ApiUsers.tg_id == tg_id)
+
         result = await session.execute(stmt)
 
         result = result.scalar_one_or_none()
         if result is not None:
             stmt = delete(ApiUsers).where(ApiUsers.tg_id == tg_id)
+            stmt_delete = delete(Addresses).where(Addresses.tg_id == tg_id)
             async with session:
+                await session.execute(stmt_delete)
                 await session.execute(stmt)
                 await session.commit()
                 return True
@@ -84,10 +92,16 @@ async def status(message: Message):
     user_id = message.from_user.id
     status = await get_my_status(user_id)
 
-    if status.electricity_status:
-        await message.answer('Світло увімкненно!')
+    if status:
+        if status.electricity_status:
+            await message.answer('Світло увімкненно!')
+        else:
+            await message.answer('Світло вимкненно!')
     else:
-        await message.answer('Світло вимкненно!')
+        await message.answer('В вас ще немає адресу!')
+
+
+
 
 
 @dp.message(F.location)
