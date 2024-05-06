@@ -11,6 +11,7 @@ from fastapi_limiter.depends import RateLimiter
 
 from starlette.middleware.base import BaseHTTPMiddleware
 
+from api.routes.ping import ping_router
 from api.routes.posts import router
 from api.schemas.models import HealthResponse
 
@@ -41,6 +42,7 @@ app.add_middleware(
 )
 
 app.include_router(router=router, prefix="/posts")
+app.include_router(router=ping_router, prefix="/ping")
 
 
 @app.get("/", response_model=HealthResponse, dependencies=[Depends(RateLimiter(times=60, seconds=60))])

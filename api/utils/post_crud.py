@@ -1,5 +1,7 @@
+import datetime
+
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, update, join
 from api.schemas.models import Post, ApiUser
 from database.models import Posts, ApiUsers, Addresses
 
@@ -69,3 +71,28 @@ async def get_uniq_address(session: AsyncSession, api_key, user_id: int = 0):
             return result.scalars().all()
     else:
         print("API key not exist!")
+
+
+async def ping_status_to_db(session: AsyncSession, electricity_status: bool, address_id: int, api_key):
+    async with session.begin():
+        stmt = select(ApiUsers).where(ApiUsers.api_key == api_key)
+        result = await session.execute(stmt)
+        user = result.scalars().first()
+
+        if user:
+            if address_id == -1:
+                await session.execute(
+                    update(Addresses)
+                    .where(Addresses.tg_id == user.tg_id)
+                    .values(last_update=datetime.datetime.now(), electricity_status=electricity_status)
+                )
+            else:
+                await session.execute(
+                    update(Addresses)
+                    .where(Addresses.tg_id == user.tg_id)
+                    .where(Addresses.id == address_id)
+                    .values(last_update=datetime.datetime.now(), electricity_status=electricity_status)
+                )
+            await session.commit()
+        else:
+            print("No user found with the provided API key")
