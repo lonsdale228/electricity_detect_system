@@ -87,6 +87,7 @@ async def delete_data(message: Message):
         await message.answer(f'Your data already deleted!')
 
 
+@dp.message(F.text == "💡Статус світла")
 @dp.message(Command("status"))
 async def status(message: Message):
     user_id = message.from_user.id
@@ -94,14 +95,11 @@ async def status(message: Message):
 
     if status:
         if status.electricity_status:
-            await message.answer('Світло увімкненно!')
+            await message.answer('🟢Світло увімкненно!')
         else:
-            await message.answer('Світло вимкненно!')
+            await message.answer('⚫️Світло вимкненно!(')
     else:
-        await message.answer('В вас ще немає адресу!')
-
-
-
+        await message.answer('В Вас ще немає жодної адреси!')
 
 
 @dp.message(F.location)

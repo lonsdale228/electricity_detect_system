@@ -40,5 +40,6 @@ class Addresses(Base):
     electricity_status: Mapped[bool] = mapped_column()
     latitude: Mapped[float] = mapped_column()
     longitude: Mapped[float] = mapped_column()
+    last_update: Mapped[datetime] = mapped_column(default=None)
 
     api_user = relationship("ApiUsers", back_populates="addresses")

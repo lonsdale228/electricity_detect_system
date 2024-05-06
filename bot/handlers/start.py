@@ -1,3 +1,4 @@
+from keyboards.add_menu import keyboard_main
 from loader import dp
 from aiogram.types import Message
 from aiogram.filters import Command
@@ -9,4 +10,4 @@ async def start(message: Message):
                          "Для створення APi ключу, введіть команду: \n"
                          "/get_api_key \n"
                          "Для додання своєї адреси, введіть: \n"
-                         "/add_address")
+                         "/add_address", reply_markup=keyboard_main)
