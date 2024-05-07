@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 from uuid import UUID, uuid4
 
@@ -25,6 +26,7 @@ class Address(BaseModel):
     latitude: float = Field(None, description="")
     longitude: float = Field(None, description="")
     electricity_status: bool = Field(None)
+    last_update: datetime | None = Field(None, description="")
 
     class Config:
         from_attributes = True

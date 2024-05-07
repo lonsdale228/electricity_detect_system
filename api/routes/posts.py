@@ -5,23 +5,23 @@ from api.utils.post_crud import post_create, get_all_users, create_api_user, get
     get_uniq_address
 from database.connection import get_session
 
-router = APIRouter(tags=["posts"])
+router = APIRouter(tags=["gets"])
 
 
-@router.post("/createe", status_code=status.HTTP_201_CREATED)
-async def create_user(api_user: ApiUser, session=Depends(get_session)):
-    create = await create_api_user(session, api_user=api_user)
-    return create.api_key
-
-
-@router.post("/create", status_code=status.HTTP_201_CREATED)
-async def create_post(post: Post, session=Depends(get_session)):
-    if post.key == "1234":
-
-        create = await post_create(session=session, post=post)
-        return create.id, create.api_key
-    else:
-        return status.HTTP_401_UNAUTHORIZED
+# @router.post("/createe", status_code=status.HTTP_201_CREATED)
+# async def create_user(api_user: ApiUser, session=Depends(get_session)):
+#     create = await create_api_user(session, api_user=api_user)
+#     return create.api_key
+#
+#
+# @router.post("/create", status_code=status.HTTP_201_CREATED)
+# async def create_post(post: Post, session=Depends(get_session)):
+#     if post.key == "1234":
+#
+#         create = await post_create(session=session, post=post)
+#         return create.id, create.api_key
+#     else:
+#         return status.HTTP_401_UNAUTHORIZED
 
 
 @router.get("/get_all_users", status_code=status.HTTP_201_CREATED, response_model=list[Post])

@@ -41,8 +41,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router=router, prefix="/posts")
-app.include_router(router=ping_router, prefix="/ping")
+app.include_router(router=router)
+app.include_router(router=ping_router)
 
 
 @app.get("/", response_model=HealthResponse, dependencies=[Depends(RateLimiter(times=60, seconds=60))])
