@@ -4,7 +4,7 @@
    ```sh
    git clone https://github.com/lonsdale228/electricity_detect_system
    ```
-2. create .env file in main folder, or just add following variables in Docker environment:
+2. create .env file in main folder and add following vars, or just add following variables in Docker environment:
    ```sh
    TG_BOT_TOKEN="1234:ABCD"
    DATABASE_URL="postgresql+asyncpg://postgres:1111@db:5432/electricity"
